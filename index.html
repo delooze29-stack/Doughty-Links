@@ -162,7 +162,7 @@ body.driving .hud .bottom{visibility:hidden}
 .linkbtn{pointer-events:auto;background:none;border:0;padding:0;font:inherit;color:var(--gold);text-decoration:underline;cursor:pointer;letter-spacing:inherit;text-transform:inherit}
 .welcome h1{font-size:44px}.welcome .go{margin-top:4px}
 #replayBadge{position:fixed;left:max(16px, env(safe-area-inset-left, 0px));top:calc(env(safe-area-inset-top, 0px) + 150px);z-index:4;pointer-events:none;font:400 20px var(--display);letter-spacing:.12em;text-transform:uppercase;color:#fff;background:#c4161c;padding:6px 14px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.35)}
-#replayBtn{position:fixed;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(env(safe-area-inset-bottom, 0px) + 24px);z-index:3;font-size:13px;padding:9px 16px;color:#fff;background:rgba(196,22,28,.92);border-color:rgba(255,255,255,.5)}
+#replayBtn{position:fixed;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(env(safe-area-inset-bottom, 0px) + 96px);z-index:3;font-size:13px;padding:9px 16px;color:#fff;background:rgba(196,22,28,.92);border-color:rgba(255,255,255,.5)}
 .wx{font-size:11px;font-weight:800;color:var(--muted);margin-top:2px}.wx.wet{color:#8fd3ff}
 #buggyUI{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom, 0px) + 18px);display:flex;gap:14px;align-items:center;z-index:3}
 #buggyUI button{pointer-events:auto;touch-action:none;width:74px;height:74px;border-radius:50%;border:3px solid rgba(255,255,255,.5);background:var(--panel);color:#fff;font:400 34px var(--display);cursor:pointer}
@@ -174,6 +174,11 @@ body.driving .hud .bottom{visibility:hidden}
 #rcamBtn{position:fixed;left:max(16px, env(safe-area-inset-left, 0px));top:calc(env(safe-area-inset-top, 0px) + 184px);z-index:4;color:#fff;background:rgba(8,34,46,.9);font-size:12px;padding:8px 12px}
 .namelist{margin:4px 0 2px}.namelist .chip{padding:5px 11px;font-size:13px}
 .wmsg{min-height:16px;margin:4px 0 0!important;font-size:13px;font-weight:800;color:var(--good)!important}.wmsg.bad{color:var(--bad)!important}
+.row .tp{font-style:normal;font-size:12px;font-weight:900;padding:1px 6px;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-variant-numeric:tabular-nums}.row .tp.under{background:#c4161c}.row .tp.over{background:#1f5fa8}
+#gridBtn{font-size:13px;padding:9px 13px;color:#fff}#gridBtn.on{color:#4a2c00;background:var(--gold)}
+#scOv{z-index:9}.sccard{width:min(720px,100%)}.scwrap{overflow-x:auto;margin:8px 0}
+.scard{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;width:100%}.scard th,.scard td{padding:5px 6px;text-align:center;border-bottom:1px solid var(--panel-edge);white-space:nowrap}
+.scard tr.par th{color:var(--muted)}.scard td small{display:block;font-size:10px;color:var(--gold)}.scard .bir{background:#c4161c;border-radius:50%}.scard .eag{background:#ffd23f;color:#4a2c00}.scard .bog{background:#1f5fa8}.scard .dbl{background:#123a6b}.scard .now{color:var(--gold)}
 .infobtn{font-size:16px;margin:8px 0 0}
 #info{z-index:9}
 .edBtns{display:flex;gap:8px;margin:8px 0 4px}.edBtns .go{font-size:16px;margin:0}
@@ -251,6 +256,7 @@ table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:a
         <div class="lie" id="lie">Tee box</div>
       </div>
       <button class="small-btn" id="mute" type="button">Sound on</button>
+      <button class="small-btn" id="scBtn" type="button">Scorecard</button>
       <button class="small-btn" id="quit" type="button">Quit round</button>
       <button class="small-btn" id="replayBtn" type="button" hidden>Replay last shot</button>
     </div>
@@ -265,7 +271,7 @@ table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:a
         <button id="cPrev" type="button" aria-label="Longer club">‹</button>
         <div class="mid"><div class="eyebrow">Club</div><div class="cname" id="cName">Driver</div><div class="crange" id="cRange">250 y</div></div>
         <button id="cNext" type="button" aria-label="Shorter club">›</button>
-      </div><button class="small-btn gv" id="gview" type="button" hidden>Green view</button></div>
+      </div><button class="small-btn gv" id="gview" type="button" hidden>Green view</button><button class="small-btn" id="gridBtn" type="button" hidden>Grid: off</button></div>
     </div>
     <div class="hint" id="hint"></div>
     <button class="shoot" id="shoot" type="button"><span>Take<br>shot</span></button>
@@ -320,6 +326,8 @@ table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:a
     <div class="chips" id="wxOpts"></div>
     <div class="eyebrow">Putting help</div>
     <div class="chips" id="aidOpts"></div>
+    <div class="eyebrow">Wind</div>
+    <div class="chips" id="windOpts"></div>
     <div class="eyebrow">Green speed</div>
     <div class="chips" id="greenOpts"></div>
     <div class="eyebrow">Fairway speed</div>
@@ -337,6 +345,14 @@ table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:a
   </div>
 </div>
 
+<div class="overlay" id="scOv" hidden>
+  <div class="card sccard">
+    <div class="eyebrow">Scorecard</div><h2 id="scTitle">Scorecard</h2>
+    <div class="scwrap"><table class="scard"><thead id="scHead"></thead><tbody id="scRows"></tbody></table></div>
+    <p class="load">Red = under par, blue = over par. The current hole shows strokes so far.</p>
+    <button class="go" id="scClose" type="button">Back to the game</button>
+  </div>
+</div>
 <div class="overlay" id="info" hidden>
   <div class="card">
     <div class="eyebrow">Doughty's Links</div><h2>Instructions and info</h2>
@@ -658,7 +674,7 @@ function placeCity(h){
 function addXTrees(h,trees){if(!h.xtrees)return;const r=rngFrom(h.seed*7+1);for(const [cx,cz] of h.xtrees)for(let k=0;k<5;k++){const a=k*1.26+r(),d=k?3+r()*3:0,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d,s=surfOf(h,x,z);if(s===3||s===5||s===4)continue;const kind=r()<.3?1:0,rad=2.6+r()*1.8;trees.push({x,z,y:hAtT(h.T,x,z),r:rad,ht:kind?rad*3.3:rad*2.5,kind,c:r()})}}
 const BRICK_COLS=[[.86,.1,.1],[.1,.36,.82],[.98,.8,.1],[.95,.95,.95],[.12,.62,.26],[1,.5,.1],[.2,.2,.22]];
 function placeBricks(h){const r=rngFrom(h.seed*29+11),B=[],obs=[],col=()=>BRICK_COLS[(r()*BRICK_COLS.length)|0];
-  const free=(x,z,rad,inPlay)=>{const s=surfOf(h,x,z);if(inPlay===2?s>1:inPlay?s!==1:s>=1)return false;for(const o of obs)if(hyp(o.x-x,o.z-z)<rad+o.r)return false;for(const p of h.people)if(hyp(p.x-x,p.z-z)<rad+3)return false;return true};
+  const g0=h.green,t0=h.line[0],free=(x,z,rad,inPlay)=>{const s=surfOf(h,x,z);if(inPlay===3?(s<1||s>2||hyp(x-g0.x,z-g0.z)<Math.max(g0.rx,g0.rz)+rad+8||hyp(x-t0[0],z-t0[1])<35):inPlay===2?s>1:inPlay?s!==1:s>=1)return false;for(const o of obs)if(hyp(o.x-x,o.z-z)<rad+o.r)return false;for(const p of h.people)if(hyp(p.x-x,p.z-z)<rad+3)return false;return true};
   const tower=(x,z,t,n,m)=>{if(!free(x,z,7,m))return;const y0=hAtT(h.T,x,z)-.3,c=col(),p=[-t[1],t[0]];for(let k=0;k<n;k++)B.push({x,z,y:y0+k*2.4,ax:k%2?p:t,w:8,d:4,h:2.4,col:k%3===2?col():c,top:k===n-1,s:2});obs.push({kind:2,x,z,y:y0,w:8,d:8,ht:n*2.4,ax:t,r:5.7})};
   const wall=(x,z,t,m,n,md)=>{const L=m*8;if(!free(x,z,L/2+1,md))return;const y0=hAtT(h.T,x,z)-.3,c=col();for(let k=0;k<n;k++)for(let i=0;i<m-(k%2);i++){const o=(i-(m-1)/2)*8+(k%2?4:0);B.push({x:x+t[0]*o,z:z+t[1]*o,y:y0+k*2.4,ax:t,w:8,d:4,h:2.4,col:(i+k)%4===3?col():c,top:k===n-1||(k%2===0&&(i===0||i===m-1)&&k===n-2),s:2})}
     obs.push({kind:2,x,z,y:y0,w:L,d:4.4,ht:n*2.4,ax:t,r:L/2+1})};
@@ -668,6 +684,12 @@ function placeBricks(h){const r=rngFrom(h.seed*29+11),B=[],obs=[],col=()=>BRICK_
     for(const sg of[-1,1]){const at=o=>[p[0]+n[0]*sg*o,p[1]+n[1]*sg*o];let q=at(h.roughW+4+r()*14);r()<.55?tower(q[0],q[1],t,2+((r()*4)|0)):wall(q[0],q[1],t,2+((r()*3)|0),2+((r()*2)|0));
       q=at(h.roughW+45+r()*50);tower(q[0],q[1],t,4+((r()*7)|0));q=at(h.roughW+105+r()*40);r()<.5?tower(q[0],q[1],t,6+((r()*9)|0)):wall(q[0],q[1],t,3+((r()*3)|0),3+((r()*3)|0))}}
   if(h.lineLen>200)for(const f of[.45,.72]){const P=lineAt(h.line,f),sg=f<.6?1:-1,x=P.x-P.t[1]*sg*h.roughW*.72,z=P.z+P.t[0]*sg*h.roughW*.72;giant(x,z,P.t)}
+  // bricks in play: towers to steer round and walls across the fairway with a gap
+  {const at=(f,lat)=>{const P=lineAt(h.line,f);return{x:P.x-P.t[1]*lat,z:P.z+P.t[0]*lat,t:P.t}};
+   if(h.par===3){const q=at(.5,(r()<.5?-1:1)*9);tower(q.x,q.z,q.t,2+((r()*2)|0),3)}
+   else{let sg=r()<.5?-1:1;for(const f of h.par===5?[.3,.52,.74]:[.38,.62]){const q=at(f,sg*(6+r()*7));tower(q.x,q.z,q.t,2+((r()*3)|0),3);sg=-sg}
+     const f=h.par===5?.63:.5,P=lineAt(h.line,f),n=[-P.t[1],P.t[0]],gap=14+r()*6,off=(r()-.5)*12;
+     for(const sd of[-1,1]){const lat=off+sd*(gap/2+12),x=P.x+n[0]*lat,z=P.z+n[1]*lat;wall(x,z,n,3,1+((r()*2)|0),3)}}}
   {const t0=h.line[0],td=norm(h.line[1][0]-t0[0],h.line[1][1]-t0[1]),tn=[td[1],-td[0]];for(const sg of[-1,1])for(const [lat,al,n] of [[20,4,3],[30,22,5],[24,40,2]]){const x=t0[0]+tn[0]*sg*lat+td[0]*al,z=t0[1]+tn[1]*sg*lat+td[1]*al;if(r()<.6)tower(x,z,td,n+((r()*3)|0),2);else wall(x,z,td,2,2,2)}}
   const ends=[[h.line[0],norm(h.line[0][0]-h.line[1][0],h.line[0][1]-h.line[1][1])],[h.pin,norm(h.pin[0]-h.line[h.line.length-2][0],h.pin[1]-h.line[h.line.length-2][1])]];
   for(const [p,dir] of ends)for(let k=0;k<22;k++){const ang=(r()-.5)*Math.PI*1.6,dist=45+r()*130,c=Math.cos(ang),s=Math.sin(ang),x=p[0]+(dir[0]*c-dir[1]*s)*dist,z=p[1]+(dir[1]*c+dir[0]*s)*dist;r()<.6?tower(x,z,dir,3+((r()*8)|0)):wall(x,z,[dir[1],-dir[0]],3+((r()*3)|0),2+((r()*3)|0))}
@@ -1127,7 +1149,11 @@ function makeGolfer(){const parts={},add=(k,g,col)=>{parts[k]=mkMesh(g,{color:co
   ['thighL','thighR','shinL','shinR'].forEach(k=>add(k,GEO.cylT,[.92,.9,.84]));['shoeL','shoeR'].forEach(k=>add(k,GEO.box,[.12,.12,.12]));
   add('pelvis',GEO.sph,[.92,.9,.84]);add('torso',GEO.sph,[.12,.39,.72]);add('neck',GEO.cyl,[.88,.68,.53]);add('head',GEO.sph,[.88,.68,.53]);add('cap',GEO.sph,[1,1,1]);add('brim',GEO.cyl,[1,1,1]);
   ['uArmL','uArmR'].forEach(k=>add(k,GEO.cyl,[.12,.39,.72]));['fArmL','fArmR'].forEach(k=>add(k,GEO.cyl,[.88,.68,.53]));add('hands',GEO.sph,[.97,.97,.97]);add('hand2',GEO.sph,[.97,.97,.97]);
-  add('grip',GEO.cyl,[.13,.13,.13]);add('shaft',GEO.cyl,[.82,.84,.86]);add('club',GEO.box,[.17,.17,.17]);return{parts,kit:null}}
+  add('grip',GEO.cyl,[.13,.13,.13]);add('shaft',GEO.cyl,[.82,.84,.86]);add('club',GEO.box,[.17,.17,.17]);
+  for(const k of['eyeL','eyeR'])add(k,GEO.sph,[.98,.98,.98]);for(const k of['pupL','pupR','browL','browR'])add(k,k[0]==='p'?GEO.sph:GEO.box,[.12,.08,.06]);add('nose',GEO.sph,[.84,.62,.48]);add('mouth',GEO.sph,[.55,.18,.16]);return{parts,kit:null}}
+function poseFace(P,LW,LD,Hd,f){const fw=nrm3(LD(f));let s=nrm3(cross([0,1,0],fw));const up=nrm3(cross(fw,s)),H=LW(Hd),at=(a,b,c)=>[H[0]+fw[0]*a+s[0]*b+up[0]*c,H[1]+fw[1]*a+s[1]*b+up[1]*c,H[2]+fw[2]*a+s[2]*b+up[2]*c];
+  for(const [e,pu,br,sg] of [['eyeL','pupL','browL',1],['eyeR','pupR','browR',-1]]){matBasis(P[e].model,s,up,fw,.022,.026,.014,at(.1,sg*.043,.018));matBasis(P[pu].model,s,up,fw,.011,.014,.009,at(.113,sg*.043,.016));matBasis(P[br].model,s,up,fw,.032,.008,.01,at(.104,sg*.044,.05))}
+  matBasis(P.nose.model,s,up,fw,.019,.024,.03,at(.112,0,-.012));matBasis(P.mouth.model,s,up,fw,.036,.01,.012,at(.1,0,-.058))}
 const golferM=makeGolfer();
 function makeBuggy(){const B={},add=(k,g,col)=>{B[k]=mkMesh(g,{color:col,cast:true});B[k].visible=false};
   add('body',GEO.box,[.95,.95,.92]);add('floor',GEO.box,[.25,.27,.28]);add('seat',GEO.box,[.18,.33,.22]);add('back',GEO.box,[.18,.33,.22]);add('roof',GEO.box,[.12,.42,.27]);add('nose',GEO.box,[.95,.95,.92]);
@@ -1159,7 +1185,7 @@ function poseReact(st,kind,t){
   matBasis(P.torso.model,SX,UP,FW,.23,.33,.14,LW([0,(shY+.93+y0)/2+.02,zc+lean*.5]));
   const Hd=[0,shY+.23,zc+lean*1.6+.02];matSeg(P.neck.model,LW([0,shY,zc+lean]),LW([0,shY+.1,zc+lean*1.3]),.05);
   matBasis(P.head.model,[1,0,0],UP,[0,0,1],.115,.12,.115,LW(Hd));matBasis(P.cap.model,[1,0,0],UP,[0,0,1],.123,.07,.123,LW([Hd[0],Hd[1]+.05,Hd[2]]));
-  const bc=[Hd[0],Hd[1]+.045,Hd[2]+.1];matSeg(P.brim.model,LW(bc),LW([bc[0],bc[1]+.012,bc[2]]),.075);
+  const bc=[Hd[0],Hd[1]+.045,Hd[2]+.1];matSeg(P.brim.model,LW(bc),LW([bc[0],bc[1]+.012,bc[2]]),.075);poseFace(P,LW,LD,Hd,[0,kind==='despair'?-.35:0,1]);
   let H1,H2,E1,E2;
   if(kind==='cheer'){const w=Math.sin(t*12)*.05;H1=[.36+w,shY+.6,zc+.06];H2=[-.36-w,shY+.6,zc+.06];E1=[.33,shY+.3,zc+.05];E2=[-.33,shY+.3,zc+.05]}
   else if(kind==='fist'){const f=Math.abs(Math.sin(t*6.5))*Math.max(.3,1-t/2);H1=[.27,shY+.05+.38*f,zc+.18];E1=[.36,shY-.18+.1*f,zc+.12];H2=[-.25,.86+y0,zc+.06];E2=[-.26,1.14+y0,zc+.02]}
@@ -1192,7 +1218,7 @@ function poseGolfer(st){
   const turn=smooth(.3,.9,fol),face=nrm3([lerp(0,1,turn),lerp(-.6,.05,turn),lerp(1,.25,turn)]),Hd=putt?[S[0],S[1]+.13,S[2]+.12]:[S[0]+.03*turn,S[1]+.21,S[2]+.07];
   matBasis(P.head.model,[1,0,0],[0,1,0],[0,0,1],.115,.12,.115,LW(Hd));
   matBasis(P.cap.model,[1,0,0],[0,1,0],[0,0,1],.123,.07,.123,LW([Hd[0],Hd[1]+.05,Hd[2]]));
-  const bc=[Hd[0]+face[0]*.1,Hd[1]+.045+face[1]*.03,Hd[2]+face[2]*.1];matSeg(P.brim.model,LW(bc),LW([bc[0],bc[1]+.012,bc[2]]),.075);
+  const bc=[Hd[0]+face[0]*.1,Hd[1]+.045+face[1]*.03,Hd[2]+face[2]*.1];matSeg(P.brim.model,LW(bc),LW([bc[0],bc[1]+.012,bc[2]]),.075);poseFace(P,LW,LD,Hd,face);
   const elbow=(sh,bend)=>{const d=[hands[0]-sh[0],hands[1]-sh[1],hands[2]-sh[2]],L=Math.hypot(d[0],d[1],d[2]),m=[(sh[0]+hands[0])/2,(sh[1]+hands[1])/2,(sh[2]+hands[2])/2];if(!bend||L>=.6)return m;
     const hb=Math.sqrt(.09-L*L/4),dn=[-d[0]/L*d[1]/L,1-d[1]*d[1]/(L*L),-d[2]/L*d[1]/L].map(v=>-v);const q=nrm3(dn);return[m[0]+q[0]*hb,m[1]+q[1]*hb,m[2]+q[2]*hb]};
   const eL=elbow(lead,false),eR=elbow(trail,true);
@@ -1226,6 +1252,7 @@ const WEATHERS={sunny:'Sunny',cloudy:'Cloudy',rain:'Rain',random:'Random'};let w
 const ROLLS={slow:['Slow',1],normal:['Normal',1.6],fast:['Fast',2.4]};let rollPref='normal';try{const r=localStorage.getItem('kfl-roll');if(ROLLS[r])rollPref=r}catch(e){}
 const AIDS={novice:'Novice · show the break',pro:'Pro · read it yourself'};let puttAid='novice';try{const a=localStorage.getItem('kfl-aid');if(AIDS[a])puttAid=a}catch(e){}
 const GREENS={slow:['Slow',1.45],medium:['Medium',1.15],fast:['Fast',.92],vfast:['Very fast',.74]};let greenPref='medium';try{const g=localStorage.getItem('kfl-greens');if(GREENS[g])greenPref=g}catch(e){}FRIC[5]=GREENS[greenPref][1];
+const WINDS={course:['Course normal',null],calm:['Calm',[0,2]],light:['Light',[3,8]],breezy:['Breezy',[9,15]],windy:['Windy',[16,25]]};let windPref='course';try{const w=localStorage.getItem('kfl-wind');if(WINDS[w])windPref=w}catch(e){}
 const WETF=[1,1.25,1.5,1.5,1.4,1.3,1,1];
 function applyWeather(w){weather=w;wet=w==='rain'?1:0;const B=WX_BASE,k=w==='rain'?1:w==='cloudy'?.5:0,mix=(a,b)=>a.map((v,i)=>lerp(v,b[i],k));
   R.sunCol=B.sunCol.map(v=>v*(1-.62*k));R.sky=mix(B.sky,[.62,.65,.68]);R.gnd=mix(B.gnd,[.4,.42,.38]);R.fog=mix(B.fog,[.66,.7,.72]);R.skyTop=mix(B.skyTop,[.4,.45,.5]);R.skyHor=mix(B.skyHor,[.7,.73,.75]);R.skyGnd=mix(B.skyGnd,[.45,.5,.45]);R.cloud=k;
@@ -1292,7 +1319,7 @@ function startHole(i){
   holeIdx=i;hole=HOLES[i];showRecord();prepHole(hole);buildHoleScene(hole);anim=null;parts=[];trail=[];ripples=[];
   const t0=hole.line[0],td=norm(hole.line[1][0]-t0[0],hole.line[1][1]-t0[1]);
   players.forEach((p,k)=>{const off=players.length>1?(k===0?-1.3:1.3):0;p.ball={x:t0[0]+td[1]*off,z:t0[1]-td[0]*off,y:0};p.strokes=0;p.done=false;p.inCup=false;p.prev=null});
-  const mph=Math.round(lerp(hole.wind[0],hole.wind[1],Math.random())),a=Math.random()*Math.PI*2;wind={x:Math.sin(a),z:Math.cos(a),mph};
+  const wr=WINDS[windPref][1]||hole.wind,mph=Math.round(lerp(wr[0],wr[1],Math.random())),a=Math.random()*Math.PI*2;wind={x:Math.sin(a),z:Math.cos(a),mph};
   applyWeather(wxPref==='random'?(()=>{const r=Math.random();return r<.5?'sunny':r<.75?'cloudy':'rain'})():wxPref);
   lastShot=null;turn=0;lie='tee';autoClub();target=defaultTarget();placeGolfer(false);spin={x:0,y:0};renderSpin();computeBreak();
   const L=hole.dense,k=Math.max(0,L.length-45),f={x:L[k][0],z:L[k][1]};
@@ -1303,6 +1330,7 @@ function startHole(i){
 /* ================= physics ================= */
 function simRoll(x,z,vx,vz,maxT){
   const pin=pinPt(),dt=1/120;maxT=maxT||14;let t=0,res='rest',near=1e9;const path=[[x,z,0]];
+  const reach=(vx*vx+vz*vz)/1.6+30,BX=hole.trees.filter(b=>b.kind===2&&b.tag!=='station'&&hyp(b.x-x,b.z-z)<reach+b.r);
   for(let i=0;t<maxT;i++){
     const code=surfCode(x,z);
     if(code===7){res='pen:water';break}
@@ -1315,6 +1343,9 @@ function simRoll(x,z,vx,vz,maxT){
     if(sp<.06&&gs<f*.85){vx=vz=0;break}
     if(sp>1e-3&&nvx*vx+nvz*vz<0&&gs<f*.85){vx=vz=0;break}
     vx=nvx;vz=nvz;x+=vx*dt;z+=vz*dt;t+=dt;
+    for(const b of BX){if(Math.abs(b.x-x)>b.r+.3||Math.abs(b.z-z)>b.r+.3)continue;const dx=x-b.x,dz=z-b.z,ax=b.ax,la=dx*ax[0]+dz*ax[1],lb=-dx*ax[1]+dz*ax[0],ea=b.w/2+BALL_R,eb=b.d/2+BALL_R;
+      if(Math.abs(la)<ea&&Math.abs(lb)<eb){const va=vx*ax[0]+vz*ax[1],vb=-vx*ax[1]+vz*ax[0];let na=la,nb=lb,wa=va,wb=vb;if(ea-Math.abs(la)<eb-Math.abs(lb)){na=Math.sign(la||1)*ea;wa=-va*.45}else{nb=Math.sign(lb||1)*eb;wb=-vb*.45}
+        x=b.x+na*ax[0]-nb*ax[1];z=b.z+na*ax[1]+nb*ax[0];vx=wa*ax[0]-wb*ax[1];vz=wa*ax[1]+wb*ax[0]}}
     if(i&1)path.push([x,z,t])}
   path.push([x,z,t]);return{path,end:{x,z},res,t,near,ev:[vx,vz]}}
 function inTree(tr,x,y,z){const d=hyp(x-tr.x,z-tr.z);if(d>tr.r)return false;const yy=y-tr.y;
@@ -1351,7 +1382,8 @@ function planShot(o){
     let vx=u[0]*v0,vz=u[1]*v0;if(v0>0){vx+=u[1]*sX*.15*v0;vz+=-u[0]*sX*.15*v0}
     out.sim=simRoll(L[0],L[1],vx,vz);out.res=out.sim.res;out.end=out.sim.end}
   return out}
-function canGreenView(){if(!players.length)return false;const P=cur(),d=distPin(P);return !P.isAI&&(state==='aim'||state==='pull')&&!CLUBS[clubIdx].putt&&d>22&&d<=effRange()*1.12}
+let gvGrid=false;
+function canGreenView(){if(!players.length||hole.range)return false;const P=cur(),d=distPin(P);return !P.isAI&&(state==='aim'||state==='pull')&&!CLUBS[clubIdx].putt&&d>22}
 function computeRollGuide(){if(!players.length||cur().isAI||!(greenView||(CLUBS[clubIdx].putt&&puttAid==='novice'))){rollGuide=null;return}const P=cur(),b=P.ball,w=wind.mph;wind.mph=0;
   const pl=planShot({st:{x:b.x,z:b.z},tgt:target,power:1,spin,v:0,ci:clubIdx,lie,pf:P.pf});wind.mph=w;rollGuide=pl.sim?pl.sim.path:null}
 function aimChanged(){computeBreak();computeRollGuide()}
@@ -1565,7 +1597,7 @@ function ambTick(){if(!amb)return;const w=.015+wind.mph/18*.09,pd=hyp(cam.x-hole
   if(Math.abs(c-amb.lc)>.003){amb.crowdG.gain.setTargetAtTime(c,AC.currentTime,.4);amb.lc=c}
   const rn=wet&&state!=='menu'?.09:0;if(rn!==amb.lr){amb.rainG.gain.setTargetAtTime(rn,AC.currentTime,.6);amb.rainLow.gain.setTargetAtTime(rn*.6,AC.currentTime,.6);amb.lr=rn}}
 $('rcamBtn').onclick=e=>{e.stopPropagation();rcamMode=RCAMS[(RCAMS.indexOf(rcamMode)+1)%RCAMS.length];$('rcamBtn').textContent='Camera: '+RCN[rcamMode];sfx('click')};
-$('gview').onclick=toggleGreenView;$('replayBtn').onclick=startReplay;$('cardReplay').onclick=startReplay;
+$('gview').onclick=toggleGreenView;$('gridBtn').onclick=()=>{gvGrid=!gvGrid;sfx('click');updateHUD()};$('scBtn').onclick=()=>{sfx('click');showScorecard()};$('scClose').onclick=()=>{sfx('click');$('scOv').hidden=true};$('replayBtn').onclick=startReplay;$('cardReplay').onclick=startReplay;
 function renderWeather(){$('wxOpts').innerHTML=Object.entries(WEATHERS).map(([k,v])=>'<button type="button" class="chip'+(k===wxPref?' sel':'')+'" data-w="'+k+'" aria-pressed="'+(k===wxPref)+'">'+v+'</button>').join('');
   document.querySelectorAll('[data-w]').forEach(el=>el.onclick=()=>{wxPref=el.dataset.w;try{localStorage.setItem('kfl-weather',wxPref)}catch(e){}sfx('click');renderWeather()})}
 renderWeather();
@@ -1578,6 +1610,9 @@ renderRoll();
 function renderGreens(){$('greenOpts').innerHTML=Object.entries(GREENS).map(([k,v])=>'<button type="button" class="chip'+(k===greenPref?' sel':'')+'" data-gs="'+k+'" aria-pressed="'+(k===greenPref)+'">'+v[0]+'</button>').join('');
   document.querySelectorAll('[data-gs]').forEach(el=>el.onclick=()=>{greenPref=el.dataset.gs;FRIC[5]=GREENS[greenPref][1];try{localStorage.setItem('kfl-greens',greenPref)}catch(e){}sfx('click');renderGreens()})}
 renderGreens();
+function renderWind(){$('windOpts').innerHTML=Object.entries(WINDS).map(([k,v])=>'<button type="button" class="chip'+(k===windPref?' sel':'')+'" data-wd="'+k+'" aria-pressed="'+(k===windPref)+'">'+v[0]+'</button>').join('');
+  document.querySelectorAll('[data-wd]').forEach(el=>el.onclick=()=>{windPref=el.dataset.wd;try{localStorage.setItem('kfl-wind',windPref)}catch(e){}sfx('click');renderWind()})}
+renderWind();
 $('mute').onclick=()=>{muted=!muted;$('mute').textContent=muted?'Sound off':'Sound on';if(master)master.gain.value=muted?0:.9};
 
 /* ================= HUD ================= */
@@ -1588,11 +1623,11 @@ function matchText(){if(players.length<2)return'';const [a,b]=holeWins();if(a===
 function updateHUD(){
   document.body.classList.toggle('driving',state==='buggy');const rng=playMode==='range'&&state!=='menu';$('holeLine').hidden=rng;$('rangeLine').hidden=!rng;
   $('hNo').textContent=holeNum(holeIdx);if(rng){$('hName').textContent='Driving Range';}$('hTot').textContent=playKey==='prac'?COURSES.prac.defs.length:COURSES[playKey].from+HOLES.length;$('crsName').textContent=COURSES[playKey].name;$('hName').textContent=hole.name;$('hPar').textContent=hole.range?'Targets':'Par '+hole.par;$('hLen').textContent=hole.range?'60–295':hole.len;
-  $('rows').innerHTML=players.map((p,i)=>'<div class="row'+(i===turn&&state!=='holeEnd'?' active':'')+'"><span class="sw" style="background:'+p.kit.mark+'"></span><span class="nm">'+(p.isAI?p.name:esc(p.name)+' · '+(p.pf.name||'').split(' ').pop())+'</span><b>'+(p.inCup?'✓ ':'')+p.strokes+'</b></div>').join('');
+  $('rows').innerHTML=players.map((p,i)=>'<div class="row'+(i===turn&&state!=='holeEnd'?' active':'')+'"><span class="sw" style="background:'+p.kit.mark+'"></span><span class="nm">'+(p.isAI?p.name:esc(p.name)+' · '+(p.pf.name||'').split(' ').pop())+'</span>'+(playMode==='range'?'':toParTag(p))+'<b>'+(p.inCup?'✓ ':'')+p.strokes+'</b></div>').join('');
   $('matchLine').textContent=matchText();$('wMph').textContent=wind.mph;$('wWx').textContent=wet?'Rain · slow ground':WEATHERS[weather];$('wWx').classList.toggle('wet',!!wet);$('lie').textContent=LIE_NAMES[lie]||'';
   const c=CLUBS[clubIdx];$('cName').textContent=c.n;$('cRange').textContent=effRange()+' y'+(rangeMul()<1?' (lie)':'');
   const P=players.length?cur():null,mine=P&&!P.isAI;
-  $('shoot').disabled=!(mine&&(state==='aim'||state==='pull'));$('replayBtn').hidden=!(canReplay()&&state==='aim'&&!cur().isAI);$('rcamBtn').hidden=state!=='replay';$('cardReplay').hidden=!lastShot;$('cPrev').disabled=$('cNext').disabled=!(mine&&state==='aim');
+  $('shoot').disabled=!(mine&&(state==='aim'||state==='pull'));$('replayBtn').hidden=!(canReplay()&&state==='aim'&&!cur().isAI);$('gridBtn').hidden=!greenView;$('gridBtn').textContent=gvGrid?'Grid: on':'Grid: off';$('gridBtn').classList.toggle('on',gvGrid);$('scBtn').hidden=hole.range||!players.length;$('rcamBtn').hidden=state!=='replay';$('cardReplay').hidden=!lastShot;$('cPrev').disabled=$('cNext').disabled=!(mine&&state==='aim');
   $('spinPanel').hidden=c.putt;const gv=canGreenView()||greenView;$('gview').hidden=!gv||state!=='aim';$('gview').textContent=greenView?'Back to tee view':'Green view';$('gview').classList.toggle('on',greenView);$('spinPanel').style.opacity=mine?1:.7;
   const pill=$('turnPill');
   if(players.length>1&&P&&!['holeEnd','menu','intro'].includes(state)){pill.hidden=false;pill.className=P.isAI?'opp':'you';pill.textContent=P.isAI?P.name+' to play'+(fast?' · fast':' · tap to speed up'):'Your shot'}
@@ -1646,6 +1681,14 @@ async function holeRecord(defs,gi){let best=null,worst=null,n=0;for(const [k,c] 
 function showRecord(){const el=$('recLine');el.textContent='';const C=COURSES[playKey];if(!C||hole.range){el.hidden=true;return}el.hidden=false;const h0=hole,gi=C.from+holeIdx,par=hole.par;
   const lab=s=>{const d=s-par;return s===1?'ace':d<=-3?'albatross':d===-2?'eagle':d===-1?'birdie':d===0?'par':d===1?'bogey':d===2?'double':'+'+d};
   holeRecord(C.defs,gi).then(R=>{if(hole!==h0)return;el.innerHTML=R.best?'Best <b>'+esc(String(R.best.n))+' '+R.best.s+'</b> <i>('+lab(R.best.s)+')</i> · Worst <b class="bad">'+esc(String(R.worst.n))+' '+R.worst.s+'</b>':'No scores on this hole yet'})}
+function toPar(p){let t=0,n=0;(p.scores||[]).forEach((s,i)=>{if(s!=null&&HOLES[i]){t+=s-HOLES[i].par;n++}});return n?t:null}
+function toParTag(p){const t=toPar(p);if(t==null)return'<i class="tp">E</i>';return'<i class="tp '+(t<0?'under':t>0?'over':'')+'">'+(t===0?'E':t>0?'+'+t:t)+'</i>'}
+function showScorecard(){const C=COURSES[playKey]||{name:''},lab=t=>t==null?'–':t===0?'E':t>0?'+'+t:''+t;
+  $('scTitle').textContent=(C.name||'Scorecard');
+  $('scHead').innerHTML='<tr><th>Hole</th>'+HOLES.map((h,i)=>'<th>'+holeNum(i)+'</th>').join('')+'<th>Tot</th></tr><tr class="par"><th>Par</th>'+HOLES.map(h=>'<th>'+h.par+'</th>').join('')+'<th>'+HOLES.reduce((a,h)=>a+h.par,0)+'</th></tr>';
+  $('scRows').innerHTML=players.map(p=>{let tot=0;const cells=HOLES.map((h,i)=>{const s=p.scores&&p.scores[i];if(s==null)return'<td>'+(i===holeIdx&&p.strokes&&!p.done?'<span class="now">'+p.strokes+'</span>':'')+'</td>';tot+=s;const r=s-h.par;return'<td class="'+(r<=-2?'eag':r===-1?'bir':r===1?'bog':r>=2?'dbl':'')+'">'+s+'</td>'}).join('');
+    const t=toPar(p);return'<tr><th>'+(p.isAI?p.name.split(' ').pop():esc(p.name))+'</th>'+cells+'<td><b>'+(tot||'–')+'</b><small>'+lab(t)+'</small></td></tr>'}).join('');
+  $('scOv').hidden=false}
 function saveRound(){const you=players[0],them=players[1],s=you.scores.reduce((a,b)=>a+(b||0),0),par=HOLES.reduce((a,h)=>a+h.par,0),all=loadRounds();
   const mine=all.filter(r=>r.n.toLowerCase()===you.name.toLowerCase()&&r.c===playKey),prevBest=mine.length?Math.min(...mine.map(r=>r.p)):null;
   let res=null;if(them){const [a,b]=holeWins();res=a>b?'Won':b>a?'Lost':'Halved'}
@@ -1817,7 +1860,7 @@ function lerpCam(a,b,t){const aa=Math.atan2(a.hx,a.hz),ba=Math.atan2(b.hx,b.hz);
   return{x:lerp(a.x,b.x,t),y:lerp(a.y,b.y,t),z:lerp(a.z,b.z,t),hx:Math.sin(an),hz:Math.cos(an),pitch:lerp(a.pitch,b.pitch,t),F:lerp(a.F,b.F,t)}}
 function aimCam(){const b=cur().ball,c=CLUBS[clubIdx],d=hyp(target.x-b.x,target.z-b.z);
   if(c.putt){const D=Math.max(6,d+3);return frameCam(b,camLockDir||aimDir(),D,.32*D+4,.5*D+3.4,.28,.22)}
-  if(greenView){const dir=camLockDir||aimDir(),t={x:target.x-dir[0]*17,z:target.z-dir[1]*17};return frameCam(t,dir,30,9,14,.22,.24)}
+  if(greenView){const pin=pinPt(),near=hyp(target.x-pin.x,target.z-pin.z)<35,f=near?target:pin,dir=near?(camLockDir||aimDir()):norm(pin.x-b.x,pin.z-b.z),t={x:f.x-dir[0]*17,z:f.z-dir[1]*17};return frameCam(t,dir,30,9,14,.22,.24)}
   const D=Math.max(40,Math.min(effRange(),d+30));return frameCam(b,camLockDir||aimDir(),D,.28*D+3,.17*D+2.2,.3,.22)}
 function swingCam(){const b=cur().ball,c=CLUBS[clubIdx],d=hyp(target.x-b.x,target.z-b.z),dir=aimDir();
   return c.putt?frameCam({x:b.x+dir[1]*.3,z:b.z-dir[0]*.3},dir,Math.max(5,d+1),4.9,2.6,.27,.2):frameCam(b,dir,Math.max(30,d),4.8,2.0,.28,.12)}
@@ -1937,18 +1980,21 @@ function drawOverlay(time){
   if(hole.targets&&(state==='aim'||state==='pull'))for(const t of hole.targets){const q=proj(t[0],hAt(t[0],t[1])+2.6,t[1]);if(!q)continue;const s=Math.round(hyp(t[0]-hole.line[0][0],t[1]-hole.line[0][1]))+'y';octx.font='900 12px Nunito, sans-serif';const w=octx.measureText(s).width+12;octx.fillStyle='rgba(8,34,46,.85)';octx.beginPath();octx.roundRect?octx.roundRect(q[0]-w/2,q[1]-20,w,18,9):octx.rect(q[0]-w/2,q[1]-20,w,18);octx.fill();octx.fillStyle='#fff';octx.textAlign='center';octx.textBaseline='middle';octx.fillText(s,q[0],q[1]-11)}
   if(state==='aim'||state==='pull')drawArc()}
 function drawArc(){
-  const b=cur().ball,p=proj(b.x,hAt(b.x,b.z)+BALL_R,b.z);if(!p)return;const pz=pzForC(clubIdx,lie,Math.max(1,pull),prof()),ra=clamp(Math.min(W,H)*.12,48,92),cx=p[0],cy=p[1],span=1.2,ang=v=>-Math.PI/2+v*span;
-  octx.save();octx.globalAlpha=state==='pull'?1:.5;octx.lineCap='butt';octx.strokeStyle='rgba(0,0,0,.45)';octx.lineWidth=19;octx.beginPath();octx.arc(cx,cy,ra,ang(-1)-.03,ang(1)+.03);octx.stroke();
+  const b=cur().ball,p=proj(b.x,hAt(b.x,b.z)+BALL_R,b.z);if(!p)return;const pz=pzForC(clubIdx,lie,Math.max(1,pull),prof()),ra=clamp(Math.min(W,H)*.14,56,104),cx=p[0],cy=p[1],span=1.2,ang=v=>-Math.PI/2+v*span;
+  octx.save();octx.globalAlpha=state==='pull'?1:.5;octx.lineCap='butt';octx.strokeStyle='rgba(0,0,0,.45)';octx.lineWidth=24;octx.beginPath();octx.arc(cx,cy,ra,ang(-1)-.03,ang(1)+.03);octx.stroke();
   const zones=[[-1,-.72,'#e2463a'],[-.72,-.4,'#f08a24'],[-.4,-pz,'#f6d034'],[-pz,pz,'#5be37d'],[pz,.4,'#f6d034'],[.4,.72,'#f08a24'],[.72,1,'#e2463a']];
-  octx.lineWidth=12;for(const[a,bb,col]of zones){octx.strokeStyle=col;octx.beginPath();octx.arc(cx,cy,ra,ang(a),ang(bb));octx.stroke()}
+  octx.lineWidth=16;for(const[a,bb,col]of zones){octx.strokeStyle=col;octx.beginPath();octx.arc(cx,cy,ra,ang(a),ang(bb));octx.stroke()}
   octx.strokeStyle='rgba(255,255,255,.35)';octx.lineWidth=2;octx.beginPath();octx.arc(cx,cy,ra-4,ang(-1),ang(1));octx.stroke();
   if(state==='pull'){const a=ang(needle),x0=cx+Math.cos(a)*ra*.62,y0=cy+Math.sin(a)*ra*.62,x1=cx+Math.cos(a)*ra*1.16,y1=cy+Math.sin(a)*ra*1.16;
     octx.lineCap='round';octx.strokeStyle='rgba(0,0,0,.6)';octx.lineWidth=7;octx.beginPath();octx.moveTo(x0,y0);octx.lineTo(x1,y1);octx.stroke();octx.strokeStyle='#fff';octx.lineWidth=3.5;octx.beginPath();octx.moveTo(x0,y0);octx.lineTo(x1,y1);octx.stroke();
-    const bx=cx+ra+20,bh=ra*1.5,by=cy,bw=12,full=1/1.1,fill=Math.min(pull,1.1)/1.1;
-    octx.fillStyle='rgba(0,0,0,.5)';octx.fillRect(bx-3,by-bh-3,bw+6,bh+6);const gr=octx.createLinearGradient(0,by,0,by-bh);gr.addColorStop(0,'#3fbf5f');gr.addColorStop(full*.8,'#b7e34a');gr.addColorStop(full,'#ffd23f');gr.addColorStop(1,'#ff4a3a');
-    octx.fillStyle=gr;octx.fillRect(bx,by-bh*fill,bw,bh*fill);octx.fillStyle='#fff';octx.fillRect(bx-5,by-bh*full-1,bw+10,2);
-    octx.font='900 13px Nunito, sans-serif';octx.textAlign='left';octx.textBaseline='middle';const bb=cur().ball,lbl=Math.round(pull*100)+'% · '+(CLUBS[clubIdx].putt?(hyp(target.x-bb.x,target.z-bb.z)*pull).toFixed(1):Math.round(hyp(target.x-bb.x,target.z-bb.z)*pull))+'y';octx.lineWidth=3;octx.strokeStyle='rgba(0,0,0,.6)';octx.strokeText(lbl,bx+bw+8,by-bh*fill);octx.fillStyle=pull>1?'#ff8a6a':'#fff';octx.fillText(lbl,bx+bw+8,by-bh*fill);
-    if(pull>1){octx.font='900 10px Nunito, sans-serif';octx.strokeText('EXTRA',bx+bw+8,by-bh*fill-14);octx.fillStyle='#ffd23f';octx.fillText('EXTRA',bx+bw+8,by-bh*fill-14)}
+    const bw=26,bh=clamp(ra*2.4,150,Math.min(300,H*.55)),by=clamp(cy+20,bh+70,H-24),bx=Math.min(cx+ra+34,W-bw-110),full=1/1.1,fill=Math.min(pull,1.1)/1.1,rr=(x,y,w,h,r)=>{octx.beginPath();octx.roundRect?octx.roundRect(x,y,w,h,r):octx.rect(x,y,w,h)};
+    octx.fillStyle='rgba(8,34,46,.85)';rr(bx-6,by-bh-6,bw+12,bh+12,10);octx.fill();octx.strokeStyle='rgba(255,255,255,.7)';octx.lineWidth=2;rr(bx-6,by-bh-6,bw+12,bh+12,10);octx.stroke();
+    octx.fillStyle='rgba(255,255,255,.12)';rr(bx,by-bh,bw,bh,6);octx.fill();const gr=octx.createLinearGradient(0,by,0,by-bh);gr.addColorStop(0,'#3fbf5f');gr.addColorStop(full*.8,'#b7e34a');gr.addColorStop(full,'#ffd23f');gr.addColorStop(1,'#ff4a3a');
+    octx.fillStyle=gr;rr(bx,by-bh*fill,bw,bh*fill,6);octx.fill();
+    octx.fillStyle='rgba(255,255,255,.75)';octx.font='800 10px Nunito, sans-serif';octx.textAlign='right';octx.textBaseline='middle';for(const q of[.25,.5,.75]){const y=by-bh*full*q;octx.fillRect(bx,y-1,bw*.45,2);}
+    octx.fillStyle='#fff';octx.fillRect(bx-10,by-bh*full-2,bw+20,4);octx.font='900 11px Nunito, sans-serif';octx.textAlign='right';octx.lineWidth=3;octx.strokeStyle='rgba(0,0,0,.7)';octx.strokeText('100',bx-12,by-bh*full);octx.fillText('100',bx-12,by-bh*full);
+    octx.font='900 20px Nunito, sans-serif';octx.textAlign='center';octx.textBaseline='bottom';const bb=cur().ball,lbl=Math.round(pull*100)+'% · '+(CLUBS[clubIdx].putt?(hyp(target.x-bb.x,target.z-bb.z)*pull).toFixed(1):Math.round(hyp(target.x-bb.x,target.z-bb.z)*pull))+'y';octx.lineWidth=3;octx.strokeStyle='rgba(0,0,0,.6)';octx.lineWidth=4;const lx=clamp(bx+bw/2,octx.measureText(lbl).width/2+6,W-octx.measureText(lbl).width/2-6);octx.strokeText(lbl,lx,by-bh-12);octx.fillStyle=pull>1?'#ff8a6a':'#fff';octx.fillText(lbl,lx,by-bh-12);
+    if(pull>1){octx.font='900 13px Nunito, sans-serif';octx.strokeText('EXTRA POWER',lx,by-bh-36);octx.fillStyle='#ffd23f';octx.fillText('EXTRA POWER',lx,by-bh-36)}
     if(pullSrc==='ball'&&pullPos){octx.setLineDash([3,6]);octx.strokeStyle='rgba(255,255,255,.8)';octx.lineWidth=2;octx.beginPath();octx.moveTo(cx,cy);octx.lineTo(pullPos[0],pullPos[1]);octx.stroke();octx.setLineDash([]);
       octx.fillStyle='rgba(255,255,255,.45)';octx.beginPath();octx.arc(pullPos[0],pullPos[1],10,0,Math.PI*2);octx.fill()}}
   octx.restore()}
@@ -1980,7 +2026,7 @@ function step(dt){
   else if(state==='rest'&&golf&&golf.react&&golf.react.t<2.4){goal=reactCam();rate=golf.react.t<.1?30:5}
   else if(state==='holeEnd'){goal=orbitCam(dt);rate=1.5}
   else if(state==='buggy'&&buggy){stepBuggy(dt);if(buggy){goal=frameCam({x:buggy.x,z:buggy.z},[Math.sin(buggy.yaw),Math.cos(buggy.yaw)],24,7.5,3.4,.3,.18);rate=4}}
-  if(goal)cam=lerpCam(cam,goal,1-Math.exp(-dt*rate));
+  if(goal&&!window.__camHold)cam=lerpCam(cam,goal,1-Math.exp(-dt*rate));
   if(state==='aiThink'){ai.t+=dt;const k=easeIO(Math.min(1,ai.t/1));target={x:lerp(ai.from.x,ai.target.x,k),z:lerp(ai.from.z,ai.target.z,k)};placeGolfer(true);
     if(ai.t>.5){const m=Math.min(1,(ai.t-.5)*3);spin={x:ai.spin.x*m,y:ai.spin.y*m};renderSpin()}
     if(ai.t>1.4){state='pull';pull=0;holdT=0;phase=0;needle=-1;pullSrc='ai';sfx('holdStart');updateHUD()}}
@@ -2011,7 +2057,7 @@ function loop(now){
     updateRail(dt);applyCam();if(bldCut){let fx=cam.x+cam.hx*40,fz=cam.z+cam.hz*40;if(players.length&&!['intro','menu'].includes(state)){const b=anim?anim.player.ball:cur().ball;fx=b.x;fz=b.z}updateBldCut(cam.x,cam.y,cam.z,fx,fz)}
     if(crowd){crowd.cheer=Math.max(0,crowd.cheer-dt*.26);posePeople(R.time)}
     animFlag(R.time);if(pinObj){const out=players.length>0&&CLUBS[clubIdx].putt&&state!=='holeEnd'&&state!=='menu';pinObj.flag.visible=pinObj.pole.visible=!out}R.wind=[wind.x*wind.mph*.0045,wind.z*wind.mph*.0045];
-    updateBalls();updateAimVisuals(R.time);if(greenGrid)greenGrid.visible=players.length>0&&!cur().isAI&&CLUBS[clubIdx].putt&&(state==='aim'||state==='pull')&&!hole.range;updateTrail();updateRain(dt);updateWindPts(dt);updateFlow(dt);updateRipples(dt);
+    updateBalls();updateAimVisuals(R.time);if(greenGrid)greenGrid.visible=players.length>0&&!cur().isAI&&(state==='aim'||state==='pull')&&!hole.range&&(CLUBS[clubIdx].putt||(greenView&&gvGrid));updateTrail();updateRain(dt);updateWindPts(dt);updateFlow(dt);updateRipples(dt);
     const showG=!!golf&&players.length&&!['menu','intro','holeEnd','buggy','replay'].includes(state)&&!(anim&&anim.player!==cur());showGolfer(showG);
     golferM.parts.hand2.visible=false;if(showG){const st={x:golf.x,z:golf.z,y:hAt(golf.x,golf.z),dir:golf.dir,ci:golf.ci,s:golf.s};if(golf.react&&state==='rest'){golferM.parts.hand2.visible=true;poseReact(st,golf.react.kind,golf.react.t)}else poseGolfer(st)}
     if(buggy)poseBuggy(buggy,buggy.P.kit);
@@ -2186,6 +2232,6 @@ $('edMore').onclick=()=>{sfx('click');$('edPanel').classList.toggle('open')};
 edc().addEventListener('pointerdown',edDown);edc().addEventListener('pointermove',edMove);edc().addEventListener('pointerup',edUp);edc().addEventListener('pointercancel',edUp);
 window.addEventListener('resize',()=>{if(!$('editor').hidden){edResize();drawEd()}});
 if(location.hash==='#fast'){window.ED=ED;window.__ck=()=>courseKey;window.__train=(s,dir)=>{const T=railObj;T.on=true;T.dir=dir||1;T.s=s;T.v=.01;T.mb.visible=T.mt.visible=T.mc.visible=true};
-  window.__look=(s,l,y,ts,tl,ty)=>{const T=hole.track,n=[T.dz,-T.dx],p=[T.x+T.dx*s+n[0]*l,T.z+T.dz*s+n[1]*l],q=[T.x+T.dx*ts+n[0]*tl,T.z+T.dz*ts+n[1]*tl];state='menu';cam=lookCam(p[0],hAt(p[0],p[1])+y,p[1],q[0],hAt(q[0],q[1])+ty,q[1],.5)};window.__hole=()=>({S:hole.stationS,rw:hole.roughW,sig:hole.sigS})}
+  window.__look=(s,l,y,ts,tl,ty)=>{const T=hole.track,n=[T.dz,-T.dx],p=[T.x+T.dx*s+n[0]*l,T.z+T.dz*s+n[1]*l],q=[T.x+T.dx*ts+n[0]*tl,T.z+T.dz*ts+n[1]*tl];state='menu';cam=lookCam(p[0],hAt(p[0],p[1])+y,p[1],q[0],hAt(q[0],q[1])+ty,q[1],.5)};window.__face=(d,h)=>{const g=golf,f=g.dir,R=[f[1],-f[0]],y=hAt(g.x,g.z);window.__camHold=1;const ex=g.x+f[0]*.15,ez=g.z+f[1]*.15;cam=lookCam(ex,y+(h||1.3),ez,g.x+R[0]*d,y+1.55,g.z+R[1]*d,.2)};window.__hole=()=>({S:hole.stationS,rw:hole.roughW,sig:hole.sigS})}
 })();
 </script>
