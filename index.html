@@ -179,6 +179,7 @@ body.driving .hud .bottom{visibility:hidden}
 #scOv{z-index:9}.sccard{width:min(720px,100%)}.scwrap{overflow-x:auto;margin:8px 0}
 .scard{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;width:100%}.scard th,.scard td{padding:5px 6px;text-align:center;border-bottom:1px solid var(--panel-edge);white-space:nowrap}
 .scard tr.par th{color:var(--muted)}.scard td small{display:block;font-size:10px;color:var(--gold)}.scard .bir{background:#c4161c;border-radius:50%}.scard .eag{background:#ffd23f;color:#4a2c00}.scard .bog{background:#1f5fa8}.scard .dbl{background:#123a6b}.scard .now{color:var(--gold)}
+.dnote{text-transform:none;letter-spacing:0;font-weight:700;color:var(--muted)}
 .infobtn{font-size:16px;margin:8px 0 0}
 #info{z-index:9}
 .edBtns{display:flex;gap:8px;margin:8px 0 4px}.edBtns .go{font-size:16px;margin:0}
@@ -326,6 +327,8 @@ table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:a
     <div class="chips" id="wxOpts"></div>
     <div class="eyebrow">Putting help</div>
     <div class="chips" id="aidOpts"></div>
+    <div class="eyebrow">Difficulty <span class="dnote">· how much a missed shot slices or hooks</span></div>
+    <div class="chips" id="diffOpts"></div>
     <div class="eyebrow">Wind</div>
     <div class="chips" id="windOpts"></div>
     <div class="eyebrow">Green speed</div>
@@ -1253,6 +1256,7 @@ const ROLLS={slow:['Slow',1],normal:['Normal',1.6],fast:['Fast',2.4]};let rollPr
 const AIDS={novice:'Novice · show the break',pro:'Pro · read it yourself'};let puttAid='novice';try{const a=localStorage.getItem('kfl-aid');if(AIDS[a])puttAid=a}catch(e){}
 const GREENS={slow:['Slow',1.45],medium:['Medium',1.15],fast:['Fast',.92],vfast:['Very fast',.74]};let greenPref='medium';try{const g=localStorage.getItem('kfl-greens');if(GREENS[g])greenPref=g}catch(e){}FRIC[5]=GREENS[greenPref][1];
 const WINDS={course:['Course normal',null],calm:['Calm',[0,2]],light:['Light',[3,8]],breezy:['Breezy',[9,15]],windy:['Windy',[16,25]]};let windPref='course';try{const w=localStorage.getItem('kfl-wind');if(WINDS[w])windPref=w}catch(e){}
+const DIFFS_H={easy:['Easy',.55],normal:['Normal',1],hard:['Hard',1.5],pro:['Pro',2.1]};let diffPref='normal';try{const d=localStorage.getItem('kfl-diff');if(DIFFS_H[d])diffPref=d}catch(e){}
 const WETF=[1,1.25,1.5,1.5,1.4,1.3,1,1];
 function applyWeather(w){weather=w;wet=w==='rain'?1:0;const B=WX_BASE,k=w==='rain'?1:w==='cloudy'?.5:0,mix=(a,b)=>a.map((v,i)=>lerp(v,b[i],k));
   R.sunCol=B.sunCol.map(v=>v*(1-.62*k));R.sky=mix(B.sky,[.62,.65,.68]);R.gnd=mix(B.gnd,[.4,.42,.38]);R.fog=mix(B.fog,[.66,.7,.72]);R.skyTop=mix(B.skyTop,[.4,.45,.5]);R.skyHor=mix(B.skyHor,[.7,.73,.75]);R.skyGnd=mix(B.skyGnd,[.45,.5,.45]);R.cloud=k;
@@ -1355,8 +1359,8 @@ function inTree(tr,x,y,z){const d=hyp(x-tr.x,z-tr.z);if(d>tr.r)return false;cons
 function planShot(o){
   const c=CLUBS[o.ci],pin=pinPt(),st=o.st,perfect=Math.abs(o.v)<=pzForC(o.ci,o.lie,o.power,o.pf),pf=o.pf||DEF_PF,sY=clamp(o.spin.y*pf.spin,-1.7,1.7),sX=o.spin.x*pf.curl;
   let dx=o.tgt.x-st.x,dz=o.tgt.z-st.z;const D=hyp(dx,dz)||1;dx/=D;dz/=D;
-  const em=o.lie==='rough'?1.2:o.lie==='bunker'?1.3:1,e=perfect?0:o.v*c.err*em*Math.PI/180,ce=Math.cos(e),se=Math.sin(e);
-  const nx=dx*ce+dz*se,nz=dz*ce-dx*se,out={perfect,nx,nz,st:{...st}},sXm=sX+(perfect||c.putt?0:clamp(o.v,-1.2,1.2)*1.35*em);
+  const dm=players.length&&!cur().isAI?DIFFS_H[diffPref][1]:1,em=(o.lie==='rough'?1.2:o.lie==='bunker'?1.3:1),e=perfect?0:o.v*c.err*em*Math.sqrt(dm)*Math.PI/180,ce=Math.cos(e),se=Math.sin(e);
+  const nx=dx*ce+dz*se,nz=dz*ce-dx*se,out={perfect,nx,nz,st:{...st}},sXm=sX+(perfect||c.putt?0:clamp(o.v,-1.2,1.2)*1.9*em*dm);
   if(c.putt){const v0=Math.sqrt(2*FRIC[5]*(wet?1.12:1)*D*o.power)*(perfect?1:1-.05*Math.abs(o.v));out.kind='putt';out.sim=simRoll(st.x,st.z,nx*v0,nz*v0);out.res=out.sim.res;out.end=out.sim.end;return out}
   const carry=D*(perfect?1:1-.06*Math.abs(o.v))*o.power;
   const wk=c.wind*wind.mph*(carry/200),rx=nz,rz=-nx,cu=sXm*carry*.08,ox=wind.x*wk+rx*cu,oz=wind.z*wk+rz*cu;
@@ -1610,6 +1614,9 @@ renderRoll();
 function renderGreens(){$('greenOpts').innerHTML=Object.entries(GREENS).map(([k,v])=>'<button type="button" class="chip'+(k===greenPref?' sel':'')+'" data-gs="'+k+'" aria-pressed="'+(k===greenPref)+'">'+v[0]+'</button>').join('');
   document.querySelectorAll('[data-gs]').forEach(el=>el.onclick=()=>{greenPref=el.dataset.gs;FRIC[5]=GREENS[greenPref][1];try{localStorage.setItem('kfl-greens',greenPref)}catch(e){}sfx('click');renderGreens()})}
 renderGreens();
+function renderDiff(){$('diffOpts').innerHTML=Object.entries(DIFFS_H).map(([k,v])=>'<button type="button" class="chip'+(k===diffPref?' sel':'')+'" data-df="'+k+'" aria-pressed="'+(k===diffPref)+'">'+v[0]+'</button>').join('');
+  document.querySelectorAll('[data-df]').forEach(el=>el.onclick=()=>{diffPref=el.dataset.df;try{localStorage.setItem('kfl-diff',diffPref)}catch(e){}sfx('click');renderDiff()})}
+renderDiff();
 function renderWind(){$('windOpts').innerHTML=Object.entries(WINDS).map(([k,v])=>'<button type="button" class="chip'+(k===windPref?' sel':'')+'" data-wd="'+k+'" aria-pressed="'+(k===windPref)+'">'+v[0]+'</button>').join('');
   document.querySelectorAll('[data-wd]').forEach(el=>el.onclick=()=>{windPref=el.dataset.wd;try{localStorage.setItem('kfl-wind',windPref)}catch(e){}sfx('click');renderWind()})}
 renderWind();
@@ -1819,7 +1826,7 @@ glc.addEventListener('pointerdown',e=>{
   if(rp&&hyp(sx-rp[0],(sy-rp[1])*2.2)<R*R0px(rp[2])+34){aimDrag={mode:'ring'};camLockDir=aimDir();setTargetFrom(sx,sy);return}
   aimDrag={mode:'swipe',x:sx,y:sy}});
 glc.addEventListener('pointermove',e=>{const [sx,sy]=canvasXY(e);
-  if(state==='pull'&&pullSrc==='ball'){pull=clamp((sy-pullStart)/(H*.2),0,1.1);pullPos=[sx,sy];if(pullX==null)pullX=sx;steerPull((sx-pullX)*(CLUBS[clubIdx].putt?.0009:.0016));return}
+  if(state==='pull'&&pullSrc==='ball'){pull=clamp((sy-pullStart)/Math.max(H*.07,Math.min(H*.2,(H-pullStart-14)/1.1)),0,1.1);pullPos=[sx,sy];if(pullX==null)pullX=sx;steerPull((sx-pullX)*(CLUBS[clubIdx].putt?.0009:.0016));return}
   if(!aimDrag||state!=='aim')return;
   if(aimDrag.mode==='ring'){setTargetFrom(sx,sy);return}
   const dx=sx-aimDrag.x,dy=sy-aimDrag.y;aimDrag.x=sx;aimDrag.y=sy;const putt=CLUBS[clubIdx].putt;
