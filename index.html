@@ -214,7 +214,7 @@ table.btab .bname{text-align:left;min-width:150px;padding:0 10px;letter-spacing:
 table.btab .bpos{min-width:36px}
 table.btab .btot{min-width:56px;font-weight:700}
 table.btab td.red{color:#c4161c}table.btab td.grn{color:#0c6b3a}table.btab td.evn{color:#1c1c1c}
-table.btab td{position:relative}table.btab td .st{position:absolute;right:3px;bottom:2px;font-size:12px;line-height:1;color:#555;font-weight:600}table.btab td .st.u{color:#c4161c}table.btab td .st.o{color:#0c6b3a}table.btab td,table.btab th{min-width:34px}table.btab .bsh{color:#1c1c1c}
+table.btab td{position:relative}table.btab td .st{position:absolute;right:2px;bottom:1px;font-size:10px;line-height:1;color:#555;font-weight:600}table.btab td .st.u{color:#c4161c}table.btab td .st.o{color:#0c6b3a}table.btab td,table.btab th{min-width:34px}table.btab .bsh{color:#1c1c1c}
 table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:auto}
 .bfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;color:#cfe3d4;font-size:12px;font-weight:700}
 .bfoot .key b{color:#ff8a8a}.bfoot .key i{font-style:normal;color:#9be3b0}
@@ -286,7 +286,7 @@ table.btab td.bmsg{font:600 16px var(--body);color:#0c5a32;padding:16px;height:a
   <div class="bhead"><span>LEADERS</span></div>
   <div class="btabs" id="bTabs"></div>
   <div class="bscroll"><table class="btab"><thead id="bHead"></thead><tbody id="bBody"></tbody></table></div>
-  <div class="bfoot"><span class="key">Big numbers: score to par after each hole (<b>red</b> under, <i>green</i> over). Small number: shots taken on that hole. <span id="bSrc"></span></span><button id="bClose" type="button">Close</button></div>
+  <div class="bfoot"><span class="key">Big numbers: shots on each hole (<b>red</b> under par, <i>green</i> over). Small number: running score to par. <span id="bSrc"></span></span><button id="bClose" type="button">Close</button></div>
 </div></div></div>
 
 <div id="toast"><div class="t1" id="t1"></div><div class="t2" id="t2"></div></div>
@@ -1786,7 +1786,7 @@ async function openBoard(k){if(k)boardKey=k;$('board').hidden=false;$('bTabs').i
   $('bHead').innerHTML='<tr><th class="bpos">Pos</th><th class="bname">Hole</th>'+holes.map((h,i)=>'<th>'+(C.from+i+1)+'</th>').join('')+'<th class="btot">To par</th><th class="bsh">Shots</th></tr><tr><th class="bpos"></th><th class="bname">Par</th>'+holes.map(h=>'<th>'+h.par+'</th>').join('')+'<th class="btot">'+holes.reduce((a,h)=>a+h.par,0)+'</th><th class="bsh"></th></tr>';
   let pos=0,prevP=null;
   $('bBody').innerHTML=list.length?list.map((r,i)=>{if(r.p!==prevP){pos=i+1;prevP=r.p}const tie=list.filter(x=>x.p===r.p).length>1;let cum=0;
-    const cells=holes.map((h,j)=>{if(!r.h||r.h[j]==null)return'<td></td>';cum+=r.h[j]-h.par;return'<td class="'+(cum<0?'red':cum>0?'grn':'evn')+'">'+(cum===0?'E':Math.abs(cum))+'<span class="st'+(r.h[j]<h.par?' u':r.h[j]>h.par?' o':'')+'">'+r.h[j]+'</span></td>'}).join('');
+    const cells=holes.map((h,j)=>{if(!r.h||r.h[j]==null)return'<td></td>';cum+=r.h[j]-h.par;const d=r.h[j]-h.par;return'<td class="'+(d<0?'red':d>0?'grn':'evn')+'">'+r.h[j]+'<span class="st'+(cum<0?' u':cum>0?' o':'')+'">'+(cum===0?'E':cum>0?'+'+cum:cum)+'</span></td>'}).join('');
     return'<tr><td class="bpos">'+(tie?'T':'')+pos+'</td><td class="bname">'+esc(String(r.n).toUpperCase())+'</td>'+cells+'<td class="btot '+(r.p<0?'red':r.p>0?'grn':'evn')+'">'+(r.p===0?'E':Math.abs(r.p))+'</td><td class="bsh">'+(r.s||'')+'</td></tr>'}).join('')
     :'<tr><td class="bmsg" colspan="30">No finished rounds on this course yet. Finish a round to get your name up here.</td></tr>';
   $('bSrc').textContent=src==='online'?'Live online board · everyone who plays':'Saved on this device · goes live for everyone once the game is online'}
