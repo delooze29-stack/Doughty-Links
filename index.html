@@ -1870,6 +1870,12 @@ function chaseCam(){const B=anim.player.ball,pl=anim.plan;
   if(pl.kind==='putt'){const rem=hyp(pl.end.x-B.x,pl.end.z-B.z),D=Math.max(6,rem+4);return frameCam(B,fd,D,.32*D+4,.5*D+3,.3,.24)}
   if(anim.kind==='flight'){const rem=hyp(pl.land.x-B.x,pl.land.z-B.z),D=Math.max(22,rem+12),g=frameCam(B,fd,D,.3*D+4,.2*D+3,.3,.22);g.y+=Math.max(0,B.y)*.6;return g}
   const rem=hyp(pl.end.x-B.x,pl.end.z-B.z),D=Math.max(26,rem+18);return frameCam(B,fd,D,.32*D+6,.26*D+4,.32,.2)}
+function puttFollowCam(){if(!anim.pc0)anim.pc0={...cam};const c0=anim.pc0,B=anim.player.ball,pin=pinPt(),ang=(x,z)=>Math.atan2(x-c0.x,z-c0.z),a0=Math.atan2(c0.hx,c0.hz);
+  const wrap=a=>{while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a},ab=wrap(ang(B.x,B.z)-a0),ap=wrap(ang(pin.x,pin.z)-a0),hw=Math.atan((W/2)/c0.F)*.78;
+  // only turn when the ball heads for the edge of the screen; keep the hole in shot too
+  let off=0;if(Math.abs(ab)>hw*.55)off=ab-Math.sign(ab)*hw*.55;const lo=Math.min(ab,ap),hi=Math.max(ab,ap),span=(hi-lo)/2+.1;let F=c0.F;
+  if(span>hw){F=(W/2)/Math.tan(Math.min(1.2,span/.78));off=(lo+hi)/2}
+  const a=a0+off;return{x:c0.x,y:c0.y,z:c0.z,hx:Math.sin(a),hz:Math.cos(a),pitch:c0.pitch,F}}
 function puttZoomCam(){const p=pinPt(),py=hAt(p.x,p.z)-.06,dx=p.x-cam.x,dz=p.z-cam.z,dh=hyp(dx,dz),h=norm(dx,dz),pitch=Math.atan2(cam.y-py,dh),d=Math.hypot(dh,cam.y-py);
   return{x:cam.x,y:cam.y,z:cam.z,hx:h[0],hz:h[1],pitch,F:Math.min((H/2)/Math.tan(.035),Math.max(cam.F,(H*.16)*d/(2*CUP_R)))}}
 function flyCam(u){const L=hole.dense,n=L.length-1,i=Math.min(n,Math.floor(u*n)),p={x:L[i][0],z:L[i][1]},j=Math.min(n,i+28),q=L[j],pin=pinPt();
@@ -2020,7 +2026,7 @@ function step(dt){
   else if(state==='aim'||state==='aiThink'){goal=aimCam();rate=4.5}
   else if(state==='pull'||(state==='swing'&&golf.swing&&!golf.swing.fired)){goal=swingCam();rate=6}
   else if(anim&&anim.replay&&anim.kind!=='sink'){cam=replayCam()}
-  else if(anim&&anim.plan&&anim.plan.kind==='putt'&&!anim.replay){goal=anim.kind==='sink'?puttZoomCam():null;rate=2.2}
+  else if(anim&&anim.plan&&anim.plan.kind==='putt'&&!anim.replay){goal=anim.kind==='sink'?puttZoomCam():puttFollowCam();rate=anim.kind==='sink'?2.2:3}
   else if(anim&&anim.kind!=='sink'){goal=chaseCam();rate=anim.kind==='flight'?3.2:3.8}
   else if(anim&&anim.kind==='sink'){goal=cupCam();rate=5}
   else if(state==='rest'&&golf&&golf.react&&golf.react.t<2.4){goal=reactCam();rate=golf.react.t<.1?30:5}
@@ -2232,6 +2238,6 @@ $('edMore').onclick=()=>{sfx('click');$('edPanel').classList.toggle('open')};
 edc().addEventListener('pointerdown',edDown);edc().addEventListener('pointermove',edMove);edc().addEventListener('pointerup',edUp);edc().addEventListener('pointercancel',edUp);
 window.addEventListener('resize',()=>{if(!$('editor').hidden){edResize();drawEd()}});
 if(location.hash==='#fast'){window.ED=ED;window.__ck=()=>courseKey;window.__train=(s,dir)=>{const T=railObj;T.on=true;T.dir=dir||1;T.s=s;T.v=.01;T.mb.visible=T.mt.visible=T.mc.visible=true};
-  window.__look=(s,l,y,ts,tl,ty)=>{const T=hole.track,n=[T.dz,-T.dx],p=[T.x+T.dx*s+n[0]*l,T.z+T.dz*s+n[1]*l],q=[T.x+T.dx*ts+n[0]*tl,T.z+T.dz*ts+n[1]*tl];state='menu';cam=lookCam(p[0],hAt(p[0],p[1])+y,p[1],q[0],hAt(q[0],q[1])+ty,q[1],.5)};window.__face=(d,h)=>{const g=golf,f=g.dir,R=[f[1],-f[0]],y=hAt(g.x,g.z);window.__camHold=1;const ex=g.x+f[0]*.15,ez=g.z+f[1]*.15;cam=lookCam(ex,y+(h||1.3),ez,g.x+R[0]*d,y+1.55,g.z+R[1]*d,.2)};window.__hole=()=>({S:hole.stationS,rw:hole.roughW,sig:hole.sigS})}
+  window.__look=(s,l,y,ts,tl,ty)=>{const T=hole.track,n=[T.dz,-T.dx],p=[T.x+T.dx*s+n[0]*l,T.z+T.dz*s+n[1]*l],q=[T.x+T.dx*ts+n[0]*tl,T.z+T.dz*ts+n[1]*tl];state='menu';cam=lookCam(p[0],hAt(p[0],p[1])+y,p[1],q[0],hAt(q[0],q[1])+ty,q[1],.5)};window.__face=(d,h)=>{const g=golf,f=g.dir,R=[f[1],-f[0]],y=hAt(g.x,g.z);window.__camHold=1;const ex=g.x+f[0]*.15,ez=g.z+f[1]*.15;cam=lookCam(ex,y+(h||1.3),ez,g.x+R[0]*d,y+1.55,g.z+R[1]*d,.2)};window.__put=(dx,dz)=>{const P=cur();P.ball.x=hole.pin[0]+dx;P.ball.z=hole.pin[1]+dz;setupTurn()};window.__aimSide=(a)=>{const b=cur().ball;target={x:target.x+(target.z-b.z)*a,z:target.z-(target.x-b.x)*a};aimChanged();placeGolfer(true)};window.__hole=()=>({S:hole.stationS,rw:hole.roughW,sig:hole.sigS})}
 })();
 </script>
